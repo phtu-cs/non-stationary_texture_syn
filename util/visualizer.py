@@ -80,7 +80,7 @@ class Visualizer():
             i = 0
             for label, image_numpy in visuals.items():
                 # img_path = os.path.join(self.img_dir, 'epoch%.3d_%s.png' % (epoch, label))
-                for col in xrange(batchsize):
+                for col in range(batchsize):
                     image = image_numpy[col].astype(np.uint8)
                     img = Image.fromarray(image)
                     w, h = img.size

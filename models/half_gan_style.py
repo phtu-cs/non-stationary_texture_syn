@@ -32,7 +32,7 @@ class HalfGanStyleModel(BaseModel):
         if torch.cuda.is_available():
             self.loss_fns = [loss_fn.cuda() for loss_fn in self.loss_fns]
         self.vgg = VGG()
-        self.vgg.load_state_dict(torch.load(os.getcwd() + '/Models/' + 'vgg_conv.pth'))
+        self.vgg.load_state_dict(torch.load(os.getcwd() + '/models/' + 'vgg_conv.pth'))
         for param in self.vgg.parameters():
             param.requires_grad = False
         if torch.cuda.is_available():
@@ -130,7 +130,7 @@ class HalfGanStyleModel(BaseModel):
             loss = sum(layer_losses)
             self.style_loss = loss
             loss.backward(retain_graph=True)
-            self.style_loss_value = self.style_loss.data[0]
+            self.style_loss_value = self.style_loss.data.item()
         else:
             self.style_loss_value = 0
 
@@ -161,10 +161,10 @@ class HalfGanStyleModel(BaseModel):
     def get_current_errors(self):
         # print(self.pred_real)
         # print(self.pred_fake)
-        return OrderedDict([('G_GAN', self.loss_G_GAN.data[0]),
-                            ('G_L1', self.loss_G_L1.data[0]),
-                            ('D_real', self.loss_D_real.data[0]),
-                            ('D_fake', self.loss_D_fake.data[0]),
+        return OrderedDict([('G_GAN', self.loss_G_GAN.data.item()),
+                            ('G_L1', self.loss_G_L1.data.item()),
+                            ('D_real', self.loss_D_real.data.item()),
+                            ('D_fake', self.loss_D_fake.data.item()),
                             ('Style', self.style_loss_value)
                             ])
 

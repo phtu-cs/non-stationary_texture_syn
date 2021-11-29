@@ -7,6 +7,8 @@ import numpy as np
 import PIL
 from pdb import set_trace as st
 import random
+from torchvision.utils import save_image
+
 
 class HalfDataset(BaseDataset):
     def initialize(self, opt):
@@ -18,6 +20,7 @@ class HalfDataset(BaseDataset):
         self.size = len(self.paths)
         self.fineSize = opt.fineSize
         self.transform = get_transform(opt)
+        self.count = 0
 
     def __getitem__(self, index):
         path = self.paths[index % self.size]
@@ -40,8 +43,18 @@ class HalfDataset(BaseDataset):
 
         A_img = B_img.crop((rw, rh, int(rw + w/2), int(rh + h/2)))
 
+        trans = transforms.ToTensor()
+        dirname = os.path.dirname(os.path.dirname(path))
+        new_dirname = os.path.join(dirname, "taming")
+        if not os.path.exists(new_dirname):
+            os.mkdir(new_dirname)
+        img_name = os.path.join(new_dirname, "B_img" + str(self.count) + ".jpg")
+        save_image(trans(B_img), img_name)
+
         A_img = self.transform(A_img)
         B_img = self.transform(B_img)
+
+        self.count += 1
 
         return {'A': A_img, 'B': B_img,
                 'A_paths': path, 'B_paths': path,
